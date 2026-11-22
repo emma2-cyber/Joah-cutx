@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Josh Cutz — Precision Fades & 3D Style Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <!-- Three.js for the 3D Hero Background -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+  <!-- EmailJS for Automated Booking Emails -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <a href="#home" class="logo">JOSH <span>CUTZ</span></a>
+    <nav class="nav-links">
+      <a href="#shave-me">Styles</a>
+      <a href="#booking">Book</a>
+      <a href="#location">Location</a>
+      <button id="auth-btn" class="btn btn-outline">Log In / Register</button>
+    </nav>
+  </header>
+
+  <!-- Logged-In Member Dashboard Bar -->
+  <section id="member-bar" class="member-bar hidden">
+    <div class="member-info">
+      <strong id="member-greeting">Welcome back</strong>
+      <div class="loyalty-wrap">
+        <span id="loyalty-text">0 / 5 cuts to 50% off</span>
+        <div class="loyalty-track">
+          <div id="loyalty-fill" class="loyalty-fill"></div>
+        </div>
+      </div>
+    </div>
+    <div class="member-actions">
+      <button id="usual-btn" class="btn btn-gold btn-sm hidden">Book My Usual</button>
+      <button id="logout-btn" class="btn btn-outline btn-sm">Log Out</button>
+    </div>
+  </section>
+
+  <!-- Hero Section with Animated 3D Taper Fade Canvas -->
+  <section id="home" class="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="badge">Open Daily · 8:00 AM – 9:00 PM</span>
+      <h1>JOSH <span>CUTZ</span></h1>
+      <p>Sharp tapers, clean skin fades, and zero wait time. Preview your cut in 3D, lock in your slot, and sit straight in the chair.</p>
+      <div class="hero-actions">
+        <a href="#shave-me" class="btn btn-gold btn-lg">Shave Me</a>
+        <a href="#location" class="btn btn-outline btn-lg">Find the Shop</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- "Shave Me" Style Catalog -->
+  <section id="shave-me" class="section">
+    <div class="section-header">
+      <span class="eyebrow">SHAVE ME CATALOG</span>
+      <h2>Choose Your Fade</h2>
+      <p>Tap any style to select it. Switch between the 3D preview and real shop cuts.</p>
+    </div>
+
+    <div id="styles-grid" class="styles-grid">
+      <!-- Style cards are injected by script.js -->
+    </div>
+  </section>
+
+  <!-- Customize & Book Section -->
+  <section id="booking" class="section booking-section">
+    <div class="section-header">
+      <span class="eyebrow">BOOK YOUR CHAIR</span>
+      <h2>Customize & Schedule</h2>
+      <p>Pick your add-ons, date, and time. New clients create a quick account on confirmation.</p>
+    </div>
+
+    <div class="booking-layout">
+      <!-- Left Column: Options -->
+      <div class="booking-form-card">
+        <div class="form-group">
+          <label class="group-title">1. Selected Style</label>
+          <div class="selected-banner">
+            <span id="selected-style-name">No style selected — pick one above</span>
+            <strong id="selected-style-price">KES 0</strong>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="group-title">2. Service Add-Ons</label>
+          <div class="addons-grid">
+            <label class="addon-item">
+              <input type="checkbox" class="addon-checkbox" value="Beard Trim & Line-Up" data-price="200">
+              <span>Beard Trim & Line-Up</span>
+              <strong>+KES 200</strong>
+            </label>
+            <label class="addon-item">
+              <input type="checkbox" class="addon-checkbox" value="Hairline Enhancement" data-price="150">
+              <span>Hairline Enhancement</span>
+              <strong>+KES 150</strong>
+            </label>
+            <label class="addon-item">
+              <input type="checkbox" class="addon-checkbox" value="Black Dye" data-price="300">
+              <span>Black Dye</span>
+              <strong>+KES 300</strong>
+            </label>
+            <label class="addon-item">
+              <input type="checkbox" class="addon-checkbox" value="Wash & Hot Towel" data-price="250">
+              <span>Wash & Hot Towel</span>
+              <strong>+KES 250</strong>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="group-title">3. Service Location</label>
+          <div class="toggle-group">
+            <label class="radio-card">
+              <input type="radio" name="service-type" value="In-Shop" data-fee="0" checked>
+              <span>In-Shop Visit</span>
+              <small>Standard Price</small>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="service-type" value="House Call" data-fee="500">
+              <span>House Call</span>
+              <small>+KES 500 Travel Fee</small>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="group-title" for="booking-date">4. Date & Time Slot</label>
+          <input type="date" id="booking-date" class="input-field" />
+          <div id="time-slots" class="time-slots">
+            <!-- Slots generated by script.js -->
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="group-title" for="ref-photo">5. Reference Photo (Optional)</label>
+          <input type="file" id="ref-photo" accept="image/*" class="input-field" />
+          <div id="ref-preview" class="ref-preview hidden"></div>
+        </div>
+      </div>
+
+      <!-- Right Column: Live Summary -->
+      <aside class="summary-card">
+        <h3>Booking Summary</h3>
+        <div class="summary-row">
+          <span>Haircut</span>
+          <span id="summary-style">—</span>
+        </div>
+        <div class="summary-row">
+          <span>Add-Ons</span>
+          <span id="summary-addons">None</span>
+        </div>
+        <div class="summary-row">
+          <span>Location</span>
+          <span id="summary-location">In-Shop</span>
+        </div>
+        <div class="summary-row">
+          <span>Date & Time</span>
+          <span id="summary-datetime">Not selected</span>
+        </div>
+        <div id="summary-discount-row" class="summary-row discount-row hidden">
+          <span>Loyalty Reward (50% Off)</span>
+          <span id="summary-discount">-KES 0</span>
+        </div>
+        <hr />
+        <div class="summary-row total-row">
+          <span>Total</span>
+          <strong id="summary-total">KES 0</strong>
+        </div>
+
+        <button id="confirm-booking-btn" class="btn btn-gold btn-full">Confirm Booking</button>
+        <p class="summary-note">Instant email alert + pre-filled WhatsApp confirmation sent straight to Josh Cutz.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Reviews & Location -->
+  <section id="location" class="section">
+    <div class="section-header">
+      <span class="eyebrow">VISIT THE CHAIR</span>
+      <h2>Reviews & Location</h2>
+    </div>
+
+    <div class="info-grid">
+      <div class="reviews-box">
+        <h3>What Clients Say</h3>
+        <article class="review-card">
+          <p>"Booked a low taper online, walked in at 4 PM sharp, and didn't wait a single minute. Cleanest blend in town."</p>
+          <span>— Kevin M. · ★★★★★</span>
+        </article>
+        <article class="review-card">
+          <p>"The Book My Usual button saves me every two weeks. Consistent line-up every time."</p>
+          <span>— Brian O. · ★★★★★</span>
+        </article>
+        <div class="socials">
+          <a href="#" target="_blank" rel="noopener">TikTok @joshcutz</a>
+          <a href="#" target="_blank" rel="noopener">Instagram @joshcutz</a>
+        </div>
+      </div>
+
+      <div class="map-box">
+        <iframe
+          title="Josh Cutz Location"
+          src="https://www.google.com/maps?q=Nairobi,Kenya&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+        <div class="shop-hours">
+          <strong>Hours:</strong> Mon – Sun, 8:00 AM – 9:00 PM<br />
+          <strong>M-Pesa Paybill / Till:</strong> Available in-shop & for deposits
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2026 Josh Cutz Barbershop. All rights reserved.</p>
+  </footer>
+
+  <!-- Register / Log In Modal -->
+  <div id="auth-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <button id="close-auth" class="modal-close" aria-label="Close">&times;</button>
+      <div class="auth-tabs">
+        <button id="tab-register" class="auth-tab active">Register</button>
+        <button id="tab-login" class="auth-tab">Log In</button>
+      </div>
+
+      <p id="auth-error" class="auth-error hidden"></p>
+
+      <!-- Register Form -->
+      <form id="register-form" class="auth-form">
+        <input type="text" id="reg-name" placeholder="Full Name" required class="input-field" />
+        <input type="tel" id="reg-phone" placeholder="WhatsApp Number (e.g. 0712345678)" required class="input-field" />
+        <input type="email" id="reg-email" placeholder="Email Address" required class="input-field" />
+        <input type="password" id="reg-password" placeholder="Create Password" minlength="4" required class="input-field" />
+        <button type="submit" class="btn btn-gold btn-full">Create Account</button>
+      </form>
+
+      <!-- Log In Form -->
+      <form id="login-form" class="auth-form hidden">
+        <input type="email" id="login-email" placeholder="Email Address" required class="input-field" />
+        <input type="password" id="login-password" placeholder="Password" required class="input-field" />
+        <button type="submit" class="btn btn-gold btn-full">Log In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Booking Confirmation Modal -->
+  <div id="confirm-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <button id="close-confirm" class="modal-close" aria-label="Close">&times;</button>
+      <span class="eyebrow">BOOKING LOCKED IN</span>
+      <h3>You're on the Schedule!</h3>
+      <div id="confirm-details" class="confirm-details"></div>
+      <a id="whatsapp-send-btn" href="#" target="_blank" rel="noopener" class="btn btn-gold btn-full">
+        Send Confirmation on WhatsApp
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>
